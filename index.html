@@ -616,7 +616,8 @@ async function addTask(){
   if(!task||!client||!deadline||!assignTo){document.getElementById('form-err').textContent='All fields are required.';return}
   const btn=document.getElementById('btn-create');btn.disabled=true;btn.textContent='Creating...';
   const maxSr=tasks.length>0?Math.max(...tasks.map(t=>parseInt(t.sr)||0)):0;
-  const newTask={id:Date.now().toString(),sr:(maxSr+1).toString(),task,client,deadline,assignedTo:assignTo,assignedName:users[assignTo]?.name||assignTo,status:S.PENDING,reason:'',createdBy:session.name,createdAt:new Date().toISOString(),completedAt:''};
+  const adminEmails=Object.values(users).filter(u=>u.role==='admin'&&u.email).map(u=>u.email).join(',');
+  const newTask={id:Date.now().toString(),sr:(maxSr+1).toString(),task,client,deadline,assignedTo:assignTo,assignedName:users[assignTo]?.name||assignTo,assignedEmail:users[assignTo]?.email||'',adminEmails:adminEmails,status:S.PENDING,reason:'',createdBy:session.name,createdAt:new Date().toISOString(),completedAt:''};
   const ok=await apiSave(newTask);
   if(ok){
     tasks.push(newTask);
@@ -700,21 +701,23 @@ function renderTable(){
 // ── TASK ACTIONS ──
 function openComplete(id){activeId=id;document.getElementById('modal-complete').classList.add('open')}
 async function submitComplete(){
-  const upd=tasks.map(t=>t.id===activeId?{...t,status:S.REVIEW,completedBy:session.name,completedAt:new Date().toISOString()}:t);
+  const adminEmails=Object.values(users).filter(u=>u.role==='admin'&&u.email).map(u=>u.email).join(',');
+  const upd=tasks.map(t=>t.id===activeId?{...t,status:S.REVIEW,completedBy:session.name,completedAt:new Date().toISOString(),assignedEmail:t.assignedEmail||users[t.assignedTo]?.email||'',adminEmails:t.adminEmails||adminEmails}:t);
   const ok=await apiSave(upd.find(t=>t.id===activeId));
   if(ok){tasks=upd;closeModal('modal-complete');renderTable();toast('Marked complete — awaiting admin review.');}
 }
-function openReason(id){
+  function openReason(id){
   activeId=id;document.getElementById('reason-inp').value=(tasks.find(t=>t.id===id)||{}).reason||'';
   document.getElementById('modal-reason').classList.add('open');
 }
 async function submitReason(){
   const r=document.getElementById('reason-inp').value.trim();if(!r)return;
-  const upd=tasks.map(t=>t.id===activeId?{...t,reason:r}:t);
+  const adminEmails=Object.values(users).filter(u=>u.role==='admin'&&u.email).map(u=>u.email).join(',');
+  const upd=tasks.map(t=>t.id===activeId?{...t,reason:r,assignedEmail:t.assignedEmail||users[t.assignedTo]?.email||'',adminEmails:t.adminEmails||adminEmails}:t);
   const ok=await apiSave(upd.find(t=>t.id===activeId));
   if(ok){tasks=upd;closeModal('modal-reason');renderTable();toast('Reason saved.');}
 }
-async function reviewTask(id){
+  async function reviewTask(id){
   const upd=tasks.map(t=>t.id===id?{...t,status:S.DONE,reviewedBy:session.name,reviewedAt:new Date().toISOString()}:t);
   const ok=await apiSave(upd.find(t=>t.id===id));
   if(ok){tasks=upd;renderTable();toast('Task fully completed! ✓');}
