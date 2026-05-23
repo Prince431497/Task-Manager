@@ -412,6 +412,7 @@ tbody td{padding:11px 13px;vertical-align:middle}
     <div class="modal-sub" id="user-modal-sub">Fill in the details for the new user.</div>
     <div class="field"><label>Full Name</label><input type="text" id="um-name" placeholder="e.g. Rahul Sharma"/></div>
     <div class="field"><label>Username <span style="font-size:10px;color:var(--text3)">(used to login)</span></label><input type="text" id="um-username" placeholder="e.g. rahul" autocomplete="off"/></div>
+    <div class="field"><label>Email Address <span style="font-size:10px;color:var(--text3)">(for notifications)</span></label><input type="text" id="um-email" placeholder="e.g. rahul@gmail.com" autocomplete="off"/></div>
     <div class="field"><label>Role</label>
       <select id="um-role">
         <option value="user">User</option>
@@ -765,7 +766,7 @@ function renderUserMaster(){
       <div class="master-av ${u.role==='admin'?'av-admin':'av-user'}">${init}</div>
       <div class="master-info">
         <div class="master-name">${u.name} ${isSelf?'<span style="font-size:10px;color:var(--text3)">(you)</span>':''}</div>
-        <div class="master-sub">${uid} · <span class="role-pill ${u.role==='admin'?'rp-admin':'rp-user'}">${u.role}</span></div>
+        <div class="master-sub">${uid} · <span class="role-pill ${u.role==='admin'?'rp-admin':'rp-user'}">${u.role}</span>${u.email?` · <span style="color:var(--text3)">${u.email}</span>`:''}</div>
       </div>
       ${canEdit?`<button class="btn btn-ghost btn-xs" onclick="openEditUser('${uid}')">✎ Edit</button>`:''}
       ${canDelete?`<button class="btn btn-danger btn-xs" onclick="removeUser('${uid}')">✕</button>`:''}
@@ -778,7 +779,7 @@ function openAddUser(){
   document.getElementById('user-modal-title').textContent='Add New User';
   document.getElementById('user-modal-sub').textContent='Fill in the details for the new user.';
   document.getElementById('um-pw-hint').textContent='(required)';
-  ['um-name','um-username','um-pw','um-pw2'].forEach(id=>document.getElementById(id).value='');
+  ['um-name','um-username','um-email','um-pw','um-pw2'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('um-role').value='user';
   document.getElementById('um-username').disabled=false;
   document.getElementById('um-err').textContent='';
@@ -792,8 +793,9 @@ function openEditUser(uid){
   document.getElementById('um-pw-hint').textContent='(leave blank to keep existing)';
   document.getElementById('um-name').value=u.name;
   document.getElementById('um-username').value=uid;
-  document.getElementById('um-username').disabled=true; // can't change username
+  document.getElementById('um-username').disabled=true;
   document.getElementById('um-role').value=u.role;
+  document.getElementById('um-email').value=u.email||'';
   document.getElementById('um-pw').value='';
   document.getElementById('um-pw2').value='';
   document.getElementById('um-err').textContent='';
@@ -803,6 +805,7 @@ function submitUser(){
   const name=document.getElementById('um-name').value.trim();
   const username=document.getElementById('um-username').value.trim().toLowerCase();
   const role=document.getElementById('um-role').value;
+  const email=document.getElementById('um-email').value.trim().toLowerCase();
   const pw=document.getElementById('um-pw').value;
   const pw2=document.getElementById('um-pw2').value;
   const errEl=document.getElementById('um-err');
@@ -814,19 +817,22 @@ function submitUser(){
     if(users[username]){errEl.textContent='Username already exists.';return}
     if(!pw){errEl.textContent='Password is required for new user.';return}
   }
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Enter a valid email address.';return}
   if(pw&&pw.length<4){errEl.textContent='Password must be at least 4 characters.';return}
   if(pw&&pw!==pw2){errEl.textContent='Passwords do not match.';return}
 
   if(isNewUser){
-    users[username]={name,role,password:pw};
+    users[username]={name,role,email,password:pw};
   } else {
     users[editUserId].name=name;
     users[editUserId].role=role;
+    users[editUserId].email=email;
     if(pw)users[editUserId].password=pw;
   }
   saveU();buildDropdowns();renderUserMaster();closeModal('modal-user');
   toast(isNewUser?`User "${name}" added ✓`:`User "${name}" updated ✓`);
 }
+  
 function removeUser(uid){
   if(!confirm(`Remove user "${users[uid].name}"? They will no longer be able to log in.`))return;
   delete users[uid];saveU();buildDropdowns();renderUserMaster();toast('User removed.','info');
