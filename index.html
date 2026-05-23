@@ -509,23 +509,32 @@ function toast(msg,type='success'){
   clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3500);
 }
 
-// ── DATE UTILS ──
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function parseDate(d){
   if(!d||String(d).trim()==='')return null;
   const s=String(d).trim();
+  // Excel serial number
   if(/^\d{5,6}$/.test(s)){const e=new Date(1899,11,30);return new Date(e.getTime()+parseInt(s)*86400000)}
+  // YYYY-MM-DD
   const iso=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if(iso)return new Date(parseInt(iso[1]),parseInt(iso[2])-1,parseInt(iso[3]));
+  // DD/MM/YYYY
   const dmy=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if(dmy)return new Date(parseInt(dmy[3]),parseInt(dmy[2])-1,parseInt(dmy[1]));
+  // Full JS string e.g. "Sun May 31 2026 00:00:00 GMT+0530 (India Standard Time)"
+  const full=s.match(/(\d{1,2})\s([A-Za-z]{3})\s(\d{4})/);
+  if(full){const mi=MON.findIndex(m=>m.toLowerCase()===full[2].toLowerCase());if(mi>=0)return new Date(parseInt(full[3]),mi,parseInt(full[1]))}
+  // "May 31 2026" style
+  const mdy=s.match(/([A-Za-z]{3})\s(\d{1,2})\s(\d{4})/);
+  if(mdy){const mi=MON.findIndex(m=>m.toLowerCase()===mdy[1].toLowerCase());if(mi>=0)return new Date(parseInt(mdy[3]),mi,parseInt(mdy[2]))}
   return null;
 }
 function fmtDate(d){
   const dt=parseDate(d);
-  if(!dt||isNaN(dt))return d||'—';
+  if(!dt||isNaN(dt))return '—';
   return String(dt.getDate()).padStart(2,'0')+' '+MON[dt.getMonth()]+' '+dt.getFullYear();
 }
+  
 function ageHTML(deadline,status){
   if(status===S.DONE||!deadline)return '<span style="color:var(--text3)">—</span>';
   const dt=parseDate(deadline);if(!dt||isNaN(dt))return '—';
