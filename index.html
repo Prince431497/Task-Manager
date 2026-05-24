@@ -24,10 +24,17 @@
   --orange:#F59E0B;--orange-bg:rgba(245,158,11,.12);
   --blue:#3B82F6;--blue-bg:rgba(59,130,246,.12);
   --purple:#A855F7;--purple-bg:rgba(168,85,247,.12);
+  --yellow:#EAB308;--yellow-bg:rgba(234,179,8,.12);
   --r:8px;--rl:14px;--rxl:20px;
   --font:'Plus Jakarta Sans',sans-serif;
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+body.light{
+  --bg:#F4F6FB;--surface:#FFFFFF;--surface2:#EEF1F8;--surface3:#E4E8F4;
+  --border:#D8DCF0;--border2:#BFC4DC;
+  --text:#1A1D2E;--text2:#5A6080;--text3:#9AA0C0;
+  --accent:#6C63FF;--accent-h:#5A52E0;--accent-glow:rgba(108,99,255,.15);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;transition:background .2s,color .2s}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--surface)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
@@ -46,21 +53,23 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
 .field textarea{resize:vertical}
 .login-err{color:var(--red);font-size:12px;margin-bottom:10px;min-height:16px}
-.btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background .2s;letter-spacing:.01em}
+.btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background .2s}
 .btn-login:hover{background:var(--accent-h)}
 .btn-login:disabled{opacity:.6;cursor:not-allowed}
 
 /* APP SHELL */
 #app-screen{display:none;min-height:100vh}
-.sidebar{position:fixed;top:0;left:0;bottom:0;width:215px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
-.sidebar-brand{padding:1.25rem 1rem 1rem;border-bottom:1px solid var(--border)}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:215px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:background .2s}
+.sidebar-brand{padding:1.25rem 1rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .brand-name{font-size:15px;font-weight:700;letter-spacing:-.3px}
 .brand-tag{font-size:11px;color:var(--text3);margin-top:2px}
-.sidebar-nav{flex:1;padding:.6rem;display:flex;flex-direction:column;gap:2px}
+.theme-toggle{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.sidebar-nav{flex:1;padding:.6rem;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border:none;background:none;font-family:var(--font);width:100%;text-align:left;transition:background .15s,color .15s}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:var(--accent-glow);color:var(--accent)}
 .nav-icon{font-size:15px;width:18px;text-align:center}
+.nav-badge{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;margin-left:auto}
 .sidebar-footer{padding:.875rem;border-top:1px solid var(--border)}
 .user-chip{display:flex;align-items:center;gap:9px}
 .user-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
@@ -75,13 +84,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .main{margin-left:215px;min-height:100vh}
 .page{display:none;padding:1.5rem 1.75rem 3rem}
 .page.active{display:block}
-.page-header{margin-bottom:1.5rem}
-.page-header h2{font-size:20px;font-weight:700;letter-spacing:-.3px}
-.page-header p{font-size:13px;color:var(--text2);margin-top:3px}
+.page-header{margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.page-header-left h2{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.page-header-left p{font-size:13px;color:var(--text2);margin-top:3px}
 
 /* STATS */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;position:relative;overflow:hidden}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;position:relative;overflow:hidden;cursor:pointer;transition:border .15s}
+.stat-card:hover{border-color:var(--accent)}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:2px}
 .c-all::before{background:var(--accent)}
 .c-pending::before{background:var(--orange)}
@@ -93,7 +103,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* FILTERS */
 .filters-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:1.25rem}
 .filters-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
-.fg{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
+.fg{display:flex;flex-direction:column;gap:4px;flex:1;min-width:110px}
 .fg label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 .fg input,.fg select{padding:8px 10px;font-size:12px;font-family:var(--font);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);outline:none}
 .fg input:focus,.fg select:focus{border-color:var(--accent)}
@@ -113,7 +123,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .add-panel.open{display:block}
 .add-panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .add-panel-hdr h3{font-size:14px;font-weight:700}
-.add-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:10px}
+.add-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:12px;margin-bottom:10px}
 .add-grid .field{margin-bottom:0}
 .form-err{font-size:12px;color:var(--red);margin-bottom:8px;min-height:16px}
 
@@ -122,17 +132,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .table-scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead{background:var(--surface2)}
-thead th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;border-bottom:1px solid var(--border)}
+thead th{padding:10px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:color .15s}
+thead th:hover{color:var(--text)}
+thead th.sorted{color:var(--accent)}
 tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--surface2)}
+tbody tr.selected{background:var(--accent-glow)}
 tbody td{padding:11px 13px;vertical-align:middle}
 .empty-state{text-align:center;padding:4rem 2rem}
 .empty-icon{font-size:36px;margin-bottom:10px}
 .empty-text{font-size:14px;font-weight:500;color:var(--text2)}
 .empty-sub{font-size:12px;color:var(--text3);margin-top:4px}
-.td-bold{font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.td-sm{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);font-size:12px}
+.td-bold{font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-sm{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);font-size:12px}
+
+/* PRIORITY */
+.pri{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.04em}
+.pri-high{background:var(--red-bg);color:var(--red)}
+.pri-medium{background:var(--orange-bg);color:var(--orange)}
+.pri-low{background:var(--green-bg);color:var(--green)}
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
@@ -146,13 +165,17 @@ tbody td{padding:11px 13px;vertical-align:middle}
 .age-over{background:var(--red-bg);color:var(--red)}
 .act-wrap{display:flex;gap:4px;flex-wrap:wrap}
 
+/* BULK BAR */
+.bulk-bar{display:none;align-items:center;gap:10px;padding:10px 14px;background:var(--accent-glow);border:1px solid var(--accent);border-radius:var(--r);margin-bottom:10px;font-size:13px;font-weight:500;color:var(--accent)}
+.bulk-bar.show{display:flex}
+
 /* SETTINGS */
 .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
 .s-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem}
 .s-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .s-card-hdr h3{font-size:14px;font-weight:700}
-.s-card > p{font-size:12px;color:var(--text2);margin-bottom:1rem}
-.master-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto}
+.s-card>p{font-size:12px;color:var(--text2);margin-bottom:1rem}
+.master-list{display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto}
 .master-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r)}
 .master-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
 .master-info{flex:1;min-width:0}
@@ -162,14 +185,44 @@ tbody td{padding:11px 13px;vertical-align:middle}
 .rp-admin{background:var(--purple-bg);color:var(--purple)}
 .rp-user{background:var(--blue-bg);color:var(--blue)}
 
+/* REPORT */
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.25rem}
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem}
+.report-card h4{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.perf-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.perf-name{font-size:12px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.perf-bar-wrap{flex:2;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.perf-bar{height:100%;border-radius:3px;background:var(--accent);transition:width .5s}
+.perf-val{font-size:11px;color:var(--text2);width:28px;text-align:right}
+.overdue-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto}
+.overdue-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--red-bg);border:1px solid rgba(239,68,68,.2);border-radius:var(--r)}
+.overdue-task{flex:1;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.overdue-days{font-size:11px;color:var(--red);font-weight:700;white-space:nowrap}
+
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.open{display:flex}
 .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:1.75rem;width:440px;max-width:100%;max-height:90vh;overflow-y:auto}
+.modal-box.wide{width:580px}
 .modal-title{font-size:16px;font-weight:700;margin-bottom:6px}
 .modal-sub{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
 .modal-btns{display:flex;gap:8px;margin-top:4px}
 .modal-divider{border:none;border-top:1px solid var(--border);margin:1rem 0}
+
+/* COMMENTS */
+.comments-list{display:flex;flex-direction:column;gap:10px;max-height:260px;overflow-y:auto;margin-bottom:14px}
+.comment-item{padding:10px 12px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border)}
+.comment-meta{font-size:11px;color:var(--text3);margin-bottom:4px;display:flex;gap:8px}
+.comment-meta strong{color:var(--text2);font-weight:600}
+.comment-text{font-size:13px;line-height:1.5}
+.comment-input-row{display:flex;gap:8px}
+.comment-input-row input{flex:1;padding:9px 11px;font-size:13px;font-family:var(--font);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);outline:none}
+.comment-input-row input:focus{border-color:var(--accent)}
+
+/* DETAIL */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.detail-item label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:3px}
+.detail-item span{font-size:13px;font-weight:500}
 
 /* SYNC OVERLAY */
 .sync-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center}
@@ -185,7 +238,7 @@ tbody td{padding:11px 13px;vertical-align:middle}
 #toast.info{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
 #toast.error{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.3)}
 
-/* MOBILE */
+/* MOBILE CARDS */
 @media(max-width:768px){
   .sidebar{width:100%;height:60px;flex-direction:row;bottom:auto;border-right:none;border-bottom:1px solid var(--border)}
   .sidebar-brand{padding:.75rem 1rem;border-bottom:none;border-right:1px solid var(--border)}
@@ -199,19 +252,25 @@ tbody td{padding:11px 13px;vertical-align:middle}
   .stats{grid-template-columns:repeat(2,1fr)}
   .add-grid{grid-template-columns:1fr 1fr}
   .settings-grid{grid-template-columns:1fr}
+  .report-grid{grid-template-columns:1fr}
   .filters-row{gap:8px}
   .fg{min-width:100px}
+  .table-scroll{display:none}
+  .mobile-cards{display:flex!important}
 }
+.mobile-cards{display:none;flex-direction:column;gap:10px}
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px}
+.task-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.task-card-title{font-size:14px;font-weight:700;flex:1}
+.task-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.task-card-meta-item{font-size:11px;color:var(--text3)}
+.task-card-meta-item span{display:block;font-size:12px;color:var(--text);font-weight:500;margin-top:1px}
+.task-card-actions{display:flex;gap:6px;flex-wrap:wrap}
 </style>
 </head>
 <body>
 <div id="toast"></div>
-<div class="sync-overlay" id="sync-overlay">
-  <div class="sync-box">
-    <div class="spinner"></div>
-    <p id="sync-msg">Loading...</p>
-  </div>
-</div>
+<div class="sync-overlay" id="sync-overlay"><div class="sync-box"><div class="spinner"></div><p id="sync-msg">Loading...</p></div></div>
 
 <!-- LOGIN -->
 <div id="login-screen">
@@ -234,42 +293,47 @@ tbody td{padding:11px 13px;vertical-align:middle}
 <div id="app-screen">
   <div class="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-name">✦ Task Manager</div>
-      <div class="brand-tag">Workspace</div>
+      <div><div class="brand-name">✦ Task Manager</div><div class="brand-tag">Workspace</div></div>
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Toggle light/dark">🌙</button>
     </div>
     <nav class="sidebar-nav">
       <button class="nav-item active" onclick="switchPage('tasks',this)"><span class="nav-icon">📋</span> Tasks</button>
-      <button class="nav-item" id="nav-settings" onclick="switchPage('settings',this)"><span class="nav-icon">⚙️</span> Settings</button>
+      <button class="nav-item" onclick="switchPage('overdue',this)"><span class="nav-icon">🔴</span> Overdue <span class="nav-badge" id="overdue-badge">0</span></button>
+      <button class="nav-item" onclick="switchPage('report',this)" id="nav-report"><span class="nav-icon">📊</span> Reports</button>
+      <button class="nav-item" onclick="switchPage('settings',this)"><span class="nav-icon">⚙️</span> Settings</button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-chip">
         <div class="user-avatar" id="sidebar-avatar"></div>
-        <div class="user-chip-info">
-          <div class="user-chip-name" id="sidebar-name">—</div>
-          <div class="user-chip-role" id="sidebar-role">—</div>
-        </div>
+        <div class="user-chip-info"><div class="user-chip-name" id="sidebar-name">—</div><div class="user-chip-role" id="sidebar-role">—</div></div>
         <button class="btn-logout" onclick="doLogout()">Out</button>
       </div>
     </div>
   </div>
 
   <div class="main">
+
     <!-- TASKS PAGE -->
     <div class="page active" id="page-tasks">
       <div class="page-header">
-        <h2>Tasks</h2>
-        <p id="page-sub">—</p>
+        <div class="page-header-left"><h2>Tasks</h2><p id="page-sub">—</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadTasks()">↻ Sync</button>
+          <button class="btn btn-accent btn-sm" id="btn-add-task" onclick="toggleAdd()" style="display:none">+ Add Task</button>
+        </div>
       </div>
+
       <div class="stats">
-        <div class="stat-card c-all"><div class="stat-label">Total</div><div class="stat-val" id="st-total">0</div></div>
-        <div class="stat-card c-pending"><div class="stat-label">Pending</div><div class="stat-val" id="st-pending">0</div></div>
-        <div class="stat-card c-review"><div class="stat-label">Review Pending</div><div class="stat-val" id="st-review">0</div></div>
-        <div class="stat-card c-done"><div class="stat-label">Completed</div><div class="stat-val" id="st-done">0</div></div>
+        <div class="stat-card c-all" onclick="filterByStatus('All')"><div class="stat-label">Total</div><div class="stat-val" id="st-total">0</div></div>
+        <div class="stat-card c-pending" onclick="filterByStatus('Pending by User')"><div class="stat-label">Pending</div><div class="stat-val" id="st-pending">0</div></div>
+        <div class="stat-card c-review" onclick="filterByStatus('Review Pending by Admin')"><div class="stat-label">Review Pending</div><div class="stat-val" id="st-review">0</div></div>
+        <div class="stat-card c-done" onclick="filterByStatus('Completed')"><div class="stat-label">Completed</div><div class="stat-val" id="st-done">0</div></div>
       </div>
 
       <div class="filters-bar">
         <div class="filters-row">
-          <div class="fg" style="max-width:210px"><label>Search</label><input type="text" id="f-search" placeholder="Task or client..." oninput="renderTable()"/></div>
+          <div class="fg" style="max-width:200px"><label>Search</label><input type="text" id="f-search" placeholder="Task, client, user..." oninput="renderTable()"/></div>
           <div class="fg" style="max-width:170px"><label>Status</label>
             <select id="f-status" onchange="renderTable()">
               <option value="All">All Statuses</option>
@@ -279,16 +343,31 @@ tbody td{padding:11px 13px;vertical-align:middle}
               <option value="Completed">Completed</option>
             </select>
           </div>
-          <div class="fg" id="fg-assign" style="max-width:155px;display:none"><label>Assigned To</label><select id="f-assign" onchange="renderTable()"><option value="All">All Users</option></select></div>
-          <div class="fg" style="max-width:145px"><label>Client</label><select id="f-client" onchange="renderTable()"><option value="All">All Clients</option></select></div>
-          <div class="fg" style="max-width:128px"><label>From</label><input type="date" id="f-from" onchange="renderTable()"/></div>
-          <div class="fg" style="max-width:128px"><label>To</label><input type="date" id="f-to" onchange="renderTable()"/></div>
+          <div class="fg" style="max-width:130px"><label>Priority</label>
+            <select id="f-priority" onchange="renderTable()">
+              <option value="All">All</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="fg" id="fg-assign" style="max-width:150px;display:none"><label>Assigned To</label><select id="f-assign" onchange="renderTable()"><option value="All">All Users</option></select></div>
+          <div class="fg" style="max-width:140px"><label>Client</label><select id="f-client" onchange="renderTable()"><option value="All">All Clients</option></select></div>
+          <div class="fg" style="max-width:125px"><label>From</label><input type="date" id="f-from" onchange="renderTable()"/></div>
+          <div class="fg" style="max-width:125px"><label>To</label><input type="date" id="f-to" onchange="renderTable()"/></div>
           <div style="display:flex;gap:7px;align-items:flex-end">
             <button class="btn btn-ghost btn-sm" onclick="clearFilters()">Clear</button>
-            <button class="btn btn-ghost btn-sm" onclick="loadTasks()">↻</button>
-            <button class="btn btn-accent btn-sm" id="btn-add-task" onclick="toggleAdd()" style="display:none">+ Add Task</button>
           </div>
         </div>
+      </div>
+
+      <!-- BULK BAR -->
+      <div class="bulk-bar" id="bulk-bar">
+        <input type="checkbox" id="bulk-check-all" onchange="toggleSelectAll(this.checked)" style="cursor:pointer"/>
+        <span id="bulk-count">0 selected</span>
+        <button class="btn btn-ghost btn-sm" id="btn-add-task2" onclick="bulkAssign()" style="display:none">Reassign</button>
+        <button class="btn btn-danger btn-sm" id="btn-bulk-del" onclick="bulkDelete()" style="display:none">Delete Selected</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearSelection()">Cancel</button>
       </div>
 
       <div class="add-panel" id="add-panel">
@@ -298,6 +377,13 @@ tbody td{padding:11px 13px;vertical-align:middle}
           <div class="field"><label>Client</label><select id="nf-client"><option value="">— Select —</option></select></div>
           <div class="field"><label>Deadline</label><input type="date" id="nf-deadline"/></div>
           <div class="field"><label>Assign To</label><select id="nf-assign"><option value="">— Select —</option></select></div>
+          <div class="field"><label>Priority</label>
+            <select id="nf-priority">
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
         </div>
         <div class="form-err" id="form-err"></div>
         <div style="display:flex;gap:8px">
@@ -306,44 +392,56 @@ tbody td{padding:11px 13px;vertical-align:middle}
         </div>
       </div>
 
+      <!-- DESKTOP TABLE -->
       <div class="table-wrap"><div class="table-scroll">
         <table>
           <thead><tr>
-            <th style="width:42px">Sr.</th>
-            <th>Task</th><th>Client</th>
-            <th style="width:95px">Deadline</th>
-            <th style="width:105px">Assigned To</th>
-            <th>Status</th>
-            <th style="width:88px">Ageing</th>
+            <th style="width:32px"><input type="checkbox" id="th-check" onchange="toggleSelectAll(this.checked)" style="cursor:pointer"/></th>
+            <th style="width:40px" onclick="sortBy('sr')">Sr.<span id="sort-sr"></span></th>
+            <th onclick="sortBy('task')">Task<span id="sort-task"></span></th>
+            <th onclick="sortBy('client')">Client<span id="sort-client"></span></th>
+            <th style="width:90px" onclick="sortBy('priority')">Priority<span id="sort-priority"></span></th>
+            <th style="width:95px" onclick="sortBy('deadline')">Deadline<span id="sort-deadline"></span></th>
+            <th style="width:105px" onclick="sortBy('assignedName')">Assigned<span id="sort-assignedName"></span></th>
+            <th onclick="sortBy('status')">Status<span id="sort-status"></span></th>
+            <th style="width:80px" onclick="sortBy('ageing')">Ageing<span id="sort-ageing"></span></th>
             <th>Reason</th>
-            <th style="width:160px">Actions</th>
+            <th style="width:155px">Actions</th>
           </tr></thead>
           <tbody id="task-tbody"></tbody>
         </table>
       </div></div>
+
+      <!-- MOBILE CARDS -->
+      <div class="mobile-cards" id="mobile-cards"></div>
+    </div>
+
+    <!-- OVERDUE PAGE -->
+    <div class="page" id="page-overdue">
+      <div class="page-header"><div class="page-header-left"><h2>🔴 Overdue Tasks</h2><p>Tasks past their deadline</p></div></div>
+      <div class="overdue-list" id="overdue-list"></div>
+    </div>
+
+    <!-- REPORT PAGE -->
+    <div class="page" id="page-report">
+      <div class="page-header">
+        <div class="page-header-left"><h2>📊 Reports</h2><p>Performance and summary</p></div>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+      <div class="report-grid" id="report-grid"></div>
     </div>
 
     <!-- SETTINGS PAGE -->
     <div class="page" id="page-settings">
-      <div class="page-header"><h2>Settings</h2><p>Manage users, clients and passwords</p></div>
+      <div class="page-header"><div class="page-header-left"><h2>Settings</h2><p>Manage users, clients and passwords</p></div></div>
       <div class="settings-grid">
-
-        <!-- USER MASTER -->
         <div class="s-card">
-          <div class="s-card-hdr">
-            <h3>👥 User Master</h3>
-            <button class="btn btn-accent btn-sm" id="btn-add-user" onclick="openAddUser()" style="display:none">+ Add User</button>
-          </div>
+          <div class="s-card-hdr"><h3>👥 User Master</h3><button class="btn btn-accent btn-sm" id="btn-add-user" onclick="openAddUser()" style="display:none">+ Add User</button></div>
           <p>Add, edit or remove users and set their passwords.</p>
           <div class="master-list" id="user-master-list"></div>
         </div>
-
-        <!-- CLIENT MASTER -->
         <div class="s-card">
-          <div class="s-card-hdr">
-            <h3>🏢 Client Master</h3>
-            <button class="btn btn-accent btn-sm" id="btn-add-client" onclick="showAddClient()" style="display:none">+ Add Client</button>
-          </div>
+          <div class="s-card-hdr"><h3>🏢 Client Master</h3><button class="btn btn-accent btn-sm" id="btn-add-client" onclick="showAddClient()" style="display:none">+ Add Client</button></div>
           <p>Add or remove clients. These appear in the task form.</p>
           <div class="master-list" id="client-master-list"></div>
           <div style="display:none;gap:8px;margin-top:10px" id="add-client-row">
@@ -352,9 +450,9 @@ tbody td{padding:11px 13px;vertical-align:middle}
             <button class="btn btn-ghost btn-sm" onclick="cancelAddClient()">Cancel</button>
           </div>
         </div>
-
       </div>
     </div>
+
   </div>
 </div>
 
@@ -383,6 +481,24 @@ tbody td{padding:11px 13px;vertical-align:middle}
   </div>
 </div>
 
+<!-- MODAL: Task Detail + Comments -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal-box wide">
+    <div class="modal-title" id="detail-title">Task Details</div>
+    <div class="detail-grid" id="detail-grid"></div>
+    <hr class="modal-divider"/>
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">💬 Comments</div>
+    <div class="comments-list" id="comments-list"></div>
+    <div class="comment-input-row">
+      <input type="text" id="comment-inp" placeholder="Add a comment..." onkeydown="if(event.key==='Enter')submitComment()"/>
+      <button class="btn btn-accent btn-sm" onclick="submitComment()">Send</button>
+    </div>
+    <div class="modal-btns" style="margin-top:14px">
+      <button class="btn btn-ghost" onclick="closeModal('modal-detail')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Edit Task -->
 <div class="modal-overlay" id="modal-edit">
   <div class="modal-box" style="width:500px">
@@ -392,6 +508,7 @@ tbody td{padding:11px 13px;vertical-align:middle}
       <div class="field"><label>Client</label><select id="et-client"></select></div>
       <div class="field"><label>Deadline</label><input type="date" id="et-deadline"/></div>
       <div class="field"><label>Assigned To</label><select id="et-assign"></select></div>
+      <div class="field"><label>Priority</label><select id="et-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
       <div class="field"><label>Status</label><select id="et-status">
         <option>Pending by User</option><option>Completed by User</option>
         <option>Review Pending by Admin</option><option>Completed</option>
@@ -405,22 +522,30 @@ tbody td{padding:11px 13px;vertical-align:middle}
   </div>
 </div>
 
-<!-- MODAL: Add / Edit User -->
+<!-- MODAL: Bulk Reassign -->
+<div class="modal-overlay" id="modal-bulk-assign">
+  <div class="modal-box">
+    <div class="modal-title">Reassign Selected Tasks</div>
+    <div class="modal-sub" id="bulk-assign-sub"></div>
+    <div class="field"><label>Assign To</label><select id="bulk-assign-user"></select></div>
+    <div class="modal-btns">
+      <button class="btn btn-accent" onclick="submitBulkAssign()">Reassign</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-bulk-assign')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit User -->
 <div class="modal-overlay" id="modal-user">
   <div class="modal-box">
     <div class="modal-title" id="user-modal-title">Add User</div>
     <div class="modal-sub" id="user-modal-sub">Fill in the details for the new user.</div>
     <div class="field"><label>Full Name</label><input type="text" id="um-name" placeholder="e.g. Rahul Sharma"/></div>
     <div class="field"><label>Username <span style="font-size:10px;color:var(--text3)">(used to login)</span></label><input type="text" id="um-username" placeholder="e.g. rahul" autocomplete="off"/></div>
-    <div class="field"><label>Email Address <span style="font-size:10px;color:var(--text3)">(for notifications)</span></label><input type="text" id="um-email" placeholder="e.g. rahul@gmail.com" autocomplete="off"/></div>
-    <div class="field"><label>Role</label>
-      <select id="um-role">
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-      </select>
-    </div>
+    <div class="field"><label>Email <span style="font-size:10px;color:var(--text3)">(optional)</span></label><input type="text" id="um-email" placeholder="e.g. rahul@gmail.com"/></div>
+    <div class="field"><label>Role</label><select id="um-role"><option value="user">User</option><option value="admin">Admin</option></select></div>
     <hr class="modal-divider"/>
-    <div class="field"><label>Password <span id="um-pw-hint" style="font-size:10px;color:var(--text3)">(leave blank to keep existing)</span></label><input type="password" id="um-pw" placeholder="Enter password" autocomplete="new-password"/></div>
+    <div class="field"><label>Password <span id="um-pw-hint" style="font-size:10px;color:var(--text3)">(required)</span></label><input type="password" id="um-pw" placeholder="Enter password" autocomplete="new-password"/></div>
     <div class="field"><label>Confirm Password</label><input type="password" id="um-pw2" placeholder="Repeat password" autocomplete="new-password"/></div>
     <div class="form-err" id="um-err"></div>
     <div class="modal-btns">
@@ -431,120 +556,104 @@ tbody td{padding:11px 13px;vertical-align:middle}
 </div>
 
 <script>
-// ══════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsX9OLJO0IZeHBDg5LLB0ifpWoHoanwWFjQmJSOU41z_LvbId2xnxgINMLKXGKzBuTJQ/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxsX9OLJO0IZeHBDg5LLB0ifpWoHoanwWFjQmJSOU41z_LvbId2xnxgINMLKXGKzBuTJQ/exec";
+const SEED_USERS={admin1:{password:'admin123',role:'admin',name:'Boss (Admin)'},admin2:{password:'admin456',role:'admin',name:'You (Admin)'}};
+const SEED_CLIENTS=['Acme Corp','Globex Inc','Initech'];
+const S={PENDING:'Pending by User',COMP_USER:'Completed by User',REVIEW:'Review Pending by Admin',DONE:'Completed'};
 
-// ── DEFAULT SEED DATA (first run only) ──
-const SEED_USERS = {
-  admin1: {password:'admin123', role:'admin', name:'Boss (Admin)'},
-  admin2: {password:'admin456', role:'admin', name:'You (Admin)'}
-};
-const SEED_CLIENTS = ['Acme Corp','Globex Inc','Initech'];
-
-const S = {
-  PENDING:'Pending by User', COMP_USER:'Completed by User',
-  REVIEW:'Review Pending by Admin', DONE:'Completed'
-};
-
-let session=null, tasks=[], users={}, clients=[];
-let activeId=null, editUserId=null, isNewUser=false, editId=null;
+let session=null,tasks=[],users={},clients=[],comments={};
+let activeId=null,editUserId=null,isNewUser=false,editId=null,detailId=null;
+let sortCol='sr',sortDir=1,selectedIds=new Set();
+let isLight=false;
 
 // ── LOCAL STORAGE ──
 function loadLocal(){
-  try{const u=JSON.parse(localStorage.getItem('tm_users')||'null'); users=u||JSON.parse(JSON.stringify(SEED_USERS))}catch(_){users=JSON.parse(JSON.stringify(SEED_USERS))}
-  try{const c=JSON.parse(localStorage.getItem('tm_clients')||'null'); clients=c||[...SEED_CLIENTS]}catch(_){clients=[...SEED_CLIENTS]}
+  try{const u=JSON.parse(localStorage.getItem('tm_users')||'null');users=u||JSON.parse(JSON.stringify(SEED_USERS))}catch(_){users=JSON.parse(JSON.stringify(SEED_USERS))}
+  try{const c=JSON.parse(localStorage.getItem('tm_clients')||'null');clients=c||[...SEED_CLIENTS]}catch(_){clients=[...SEED_CLIENTS]}
+  try{comments=JSON.parse(localStorage.getItem('tm_comments')||'{}')}catch(_){comments={}}
+  isLight=localStorage.getItem('tm_theme')==='light';
+  if(isLight){document.body.classList.add('light');document.getElementById('theme-btn').textContent='☀️'}
 }
 function saveU(){localStorage.setItem('tm_users',JSON.stringify(users))}
 function saveC(){localStorage.setItem('tm_clients',JSON.stringify(clients))}
+function saveComments(){localStorage.setItem('tm_comments',JSON.stringify(comments))}
 
-// ── JSONP (works from local files & GitHub Pages) ──
+// ── THEME ──
+function toggleTheme(){
+  isLight=!isLight;document.body.classList.toggle('light',isLight);
+  document.getElementById('theme-btn').textContent=isLight?'☀️':'🌙';
+  localStorage.setItem('tm_theme',isLight?'light':'dark');
+}
+
+// ── JSONP ──
 let _cb=0;
 function jsonp(params,ms=15000){
   return new Promise((res,rej)=>{
-    const cb='__gs_'+( ++_cb);
+    const cb='__gs_'+(++_cb);
     const url=SCRIPT_URL+'?'+new URLSearchParams({...params,callback:cb});
     const s=document.createElement('script');
     const t=setTimeout(()=>{cleanup();rej(new Error('Timed out'))},ms);
     window[cb]=d=>{cleanup();res(d)};
     s.onerror=()=>{cleanup();rej(new Error('Network error'))};
     function cleanup(){clearTimeout(t);delete window[cb];s.parentNode&&s.parentNode.removeChild(s)}
-    s.src=url; document.head.appendChild(s);
+    s.src=url;document.head.appendChild(s);
   });
 }
 
-// ── SYNC UI ──
 function showSync(msg='Syncing...'){document.getElementById('sync-msg').textContent=msg;document.getElementById('sync-overlay').classList.add('show')}
 function hideSync(){document.getElementById('sync-overlay').classList.remove('show')}
 
-// ── GOOGLE SHEETS ──
 async function loadTasks(){
   showSync('Loading tasks...');
   try{
     const d=await jsonp({action:'getTasks'});
-    if(d.success){tasks=(d.tasks||[]).filter(t=>t.id&&String(t.id).trim()!=='');renderTable();toast('Synced ✓');}
+    if(d.success){tasks=(d.tasks||[]).filter(t=>t.id&&String(t.id).trim()!=='');renderTable();renderOverdue();renderReport();toast('Synced ✓');}
     else toast('Load error: '+(d.error||'Unknown'),'error');
   }catch(e){toast(e.message,'error')}
   hideSync();
 }
 async function apiSave(task){
-  showSync('Saving...');
-  let ok=false;
+  showSync('Saving...');let ok=false;
   try{const d=await jsonp({action:'saveTask',task:JSON.stringify(task)});ok=d.success;if(!ok)toast('Save error: '+(d.error||''),'error');}
   catch(e){toast(e.message,'error')}
   hideSync();return ok;
 }
 async function apiDelete(id){
-  showSync('Deleting...');
-  let ok=false;
+  showSync('Deleting...');let ok=false;
   try{const d=await jsonp({action:'deleteTask',id:String(id)});ok=d.success;if(!ok)toast('Delete error','error');}
   catch(e){toast(e.message,'error')}
   hideSync();return ok;
 }
 
-// ── TOAST ──
 function toast(msg,type='success'){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className=type;t.style.display='block';
   clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3500);
 }
 
+// ── DATE ──
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function parseDate(d){
-  if(!d||String(d).trim()==='')return null;
-  const s=String(d).trim();
-  // Excel serial number
+  if(!d||String(d).trim()==='')return null;const s=String(d).trim();
   if(/^\d{5,6}$/.test(s)){const e=new Date(1899,11,30);return new Date(e.getTime()+parseInt(s)*86400000)}
-  // YYYY-MM-DD
-  const iso=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(iso)return new Date(parseInt(iso[1]),parseInt(iso[2])-1,parseInt(iso[3]));
-  // DD/MM/YYYY
-  const dmy=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if(dmy)return new Date(parseInt(dmy[3]),parseInt(dmy[2])-1,parseInt(dmy[1]));
-  // Full JS string e.g. "Sun May 31 2026 00:00:00 GMT+0530 (India Standard Time)"
-  const full=s.match(/(\d{1,2})\s([A-Za-z]{3})\s(\d{4})/);
-  if(full){const mi=MON.findIndex(m=>m.toLowerCase()===full[2].toLowerCase());if(mi>=0)return new Date(parseInt(full[3]),mi,parseInt(full[1]))}
-  // "May 31 2026" style
-  const mdy=s.match(/([A-Za-z]{3})\s(\d{1,2})\s(\d{4})/);
-  if(mdy){const mi=MON.findIndex(m=>m.toLowerCase()===mdy[1].toLowerCase());if(mi>=0)return new Date(parseInt(mdy[3]),mi,parseInt(mdy[2]))}
+  const iso=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(iso)return new Date(parseInt(iso[1]),parseInt(iso[2])-1,parseInt(iso[3]));
+  const dmy=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(dmy)return new Date(parseInt(dmy[3]),parseInt(dmy[2])-1,parseInt(dmy[1]));
+  const full=s.match(/(\d{1,2})\s([A-Za-z]{3})\s(\d{4})/);if(full){const mi=MON.findIndex(m=>m.toLowerCase()===full[2].toLowerCase());if(mi>=0)return new Date(parseInt(full[3]),mi,parseInt(full[1]))}
+  const mdy=s.match(/([A-Za-z]{3})\s(\d{1,2})\s(\d{4})/);if(mdy){const mi=MON.findIndex(m=>m.toLowerCase()===mdy[1].toLowerCase());if(mi>=0)return new Date(parseInt(mdy[3]),mi,parseInt(mdy[2]))}
   return null;
 }
-function fmtDate(d){
-  const dt=parseDate(d);
-  if(!dt||isNaN(dt))return '—';
-  return String(dt.getDate()).padStart(2,'0')+' '+MON[dt.getMonth()]+' '+dt.getFullYear();
-}
-  
-function ageHTML(deadline,status){
-  if(status===S.DONE||!deadline)return '<span style="color:var(--text3)">—</span>';
-  const dt=parseDate(deadline);if(!dt||isNaN(dt))return '—';
+function fmtDate(d){const dt=parseDate(d);if(!dt||isNaN(dt))return'—';return String(dt.getDate()).padStart(2,'0')+' '+MON[dt.getMonth()]+' '+dt.getFullYear()}
+function ageDays(deadline){
+  if(!deadline)return null;const dt=parseDate(deadline);if(!dt||isNaN(dt))return null;
   const today=new Date();today.setHours(0,0,0,0);
-  const due=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());
-  const diff=Math.floor((today-due)/86400000);
-  if(diff<0)return `<span class="badge age-ok">${Math.abs(diff)}d left</span>`;
-  if(diff===0)return `<span class="badge age-today">Due Today</span>`;
-  return `<span class="badge age-over">${diff}d late</span>`;
+  return Math.floor((today-new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()))/86400000);
+}
+function ageHTML(deadline,status){
+  if(status===S.DONE||!deadline)return'<span style="color:var(--text3)">—</span>';
+  const d=ageDays(deadline);if(d===null)return'—';
+  if(d<0)return`<span class="badge age-ok">${Math.abs(d)}d left</span>`;
+  if(d===0)return`<span class="badge age-today">Due Today</span>`;
+  return`<span class="badge age-over">${d}d late</span>`;
 }
 
 // ── LOGIN ──
@@ -553,32 +662,31 @@ async function doLogin(){
   const pw=document.getElementById('inp-pass').value;
   const u=users[uid];
   if(!u||u.password!==pw){document.getElementById('login-err').textContent='Invalid username or password.';return}
-  const btn=document.getElementById('btn-signin');
-  btn.textContent='Signing in...';btn.disabled=true;
+  const btn=document.getElementById('btn-signin');btn.textContent='Signing in...';btn.disabled=true;
   session={id:uid,...u};
-  document.getElementById('login-err').textContent='';
-  document.getElementById('inp-pass').value='';
+  document.getElementById('login-err').textContent='';document.getElementById('inp-pass').value='';
   const init=session.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const av=document.getElementById('sidebar-avatar');
-  av.textContent=init;av.className='user-avatar '+(session.role==='admin'?'av-admin':'av-user');
+  const av=document.getElementById('sidebar-avatar');av.textContent=init;av.className='user-avatar '+(session.role==='admin'?'av-admin':'av-user');
   document.getElementById('sidebar-name').textContent=session.name;
   document.getElementById('sidebar-role').textContent=session.role==='admin'?'Admin':'User';
   document.getElementById('btn-add-task').style.display=session.role==='admin'?'inline-flex':'none';
   document.getElementById('btn-add-user').style.display=session.role==='admin'?'inline-flex':'none';
   document.getElementById('btn-add-client').style.display=session.role==='admin'?'inline-flex':'none';
   document.getElementById('fg-assign').style.display=session.role==='admin'?'flex':'none';
+  document.getElementById('nav-report').style.display=session.role==='admin'?'flex':'none';
+  document.getElementById('btn-add-task2').style.display=session.role==='admin'?'inline-flex':'none';
+  document.getElementById('btn-bulk-del').style.display=session.role==='admin'?'inline-flex':'none';
   document.getElementById('page-sub').textContent=session.role==='admin'?'Manage and track all tasks':'Your assigned tasks';
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-screen').style.display='block';
-  buildDropdowns();renderSettings();
-  await loadTasks();
+  buildDropdowns();renderSettings();await loadTasks();
   btn.textContent='Sign In →';btn.disabled=false;
 }
 document.getElementById('inp-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 document.getElementById('inp-user').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 
 function doLogout(){
-  session=null;tasks=[];
+  session=null;tasks=[];selectedIds.clear();
   document.getElementById('app-screen').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('add-panel').classList.remove('open');
@@ -588,9 +696,10 @@ function doLogout(){
 function switchPage(name,btn){
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');document.getElementById('page-'+name).classList.add('active');
   if(name==='settings')renderSettings();
+  if(name==='overdue')renderOverdue();
+  if(name==='report')renderReport();
 }
 
 // ── DROPDOWNS ──
@@ -598,12 +707,25 @@ function buildDropdowns(){
   const uids=Object.keys(users).filter(id=>users[id].role==='user');
   document.getElementById('nf-assign').innerHTML='<option value="">— Select —</option>'+uids.map(id=>`<option value="${id}">${users[id].name}</option>`).join('');
   document.getElementById('f-assign').innerHTML='<option value="All">All Users</option>'+uids.map(id=>`<option value="${id}">${users[id].name}</option>`).join('');
+  document.getElementById('bulk-assign-user').innerHTML=uids.map(id=>`<option value="${id}">${users[id].name}</option>`).join('');
   const cOpts=clients.map(c=>`<option value="${c}">${c}</option>`).join('');
   document.getElementById('nf-client').innerHTML='<option value="">— Select —</option>'+cOpts;
   document.getElementById('f-client').innerHTML='<option value="All">All Clients</option>'+cOpts;
   document.getElementById('et-client').innerHTML=cOpts;
   document.getElementById('et-assign').innerHTML=uids.map(id=>`<option value="${id}">${users[id].name}</option>`).join('');
 }
+
+// ── SORT ──
+function sortBy(col){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1}
+  document.querySelectorAll('thead th span').forEach(s=>s.textContent='');
+  const el=document.getElementById('sort-'+col);
+  if(el)el.textContent=sortDir===1?' ↑':' ↓';
+  renderTable();
+}
+
+// ── FILTER BY STATUS (click stat card) ──
+function filterByStatus(s){document.getElementById('f-status').value=s;renderTable()}
 
 // ── ADD TASK ──
 function toggleAdd(){document.getElementById('add-panel').classList.toggle('open');document.getElementById('form-err').textContent=''}
@@ -613,18 +735,18 @@ async function addTask(){
   const client=document.getElementById('nf-client').value;
   const deadline=document.getElementById('nf-deadline').value;
   const assignTo=document.getElementById('nf-assign').value;
+  const priority=document.getElementById('nf-priority').value;
   if(!task||!client||!deadline||!assignTo){document.getElementById('form-err').textContent='All fields are required.';return}
   const btn=document.getElementById('btn-create');btn.disabled=true;btn.textContent='Creating...';
   const maxSr=tasks.length>0?Math.max(...tasks.map(t=>parseInt(t.sr)||0)):0;
-  const adminEmails=Object.values(users).filter(u=>u.role==='admin'&&u.email).map(u=>u.email).join(',');
-  const newTask={id:Date.now().toString(),sr:(maxSr+1).toString(),task,client,deadline,assignedTo:assignTo,assignedName:users[assignTo]?.name||assignTo,assignedEmail:users[assignTo]?.email||'',adminEmails:adminEmails,status:S.PENDING,reason:'',createdBy:session.name,createdAt:new Date().toISOString(),completedAt:''};
+  const newTask={id:Date.now().toString(),sr:(maxSr+1).toString(),task,client,deadline,assignedTo:assignTo,assignedName:users[assignTo]?.name||assignTo,priority,status:S.PENDING,reason:'',createdBy:session.name,createdAt:new Date().toISOString(),completedAt:''};
   const ok=await apiSave(newTask);
   if(ok){
     tasks.push(newTask);
     ['nf-task','nf-deadline'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('nf-client').value='';document.getElementById('nf-assign').value='';
+    document.getElementById('nf-client').value='';document.getElementById('nf-assign').value='';document.getElementById('nf-priority').value='Medium';
     document.getElementById('add-panel').classList.remove('open');
-    renderTable();toast('Task created ✓');
+    renderTable();renderOverdue();renderReport();toast('Task created ✓');
   }
   btn.disabled=false;btn.textContent='Create Task';
 }
@@ -632,101 +754,187 @@ async function addTask(){
 // ── FILTERS ──
 function clearFilters(){
   ['f-search','f-from','f-to'].forEach(id=>document.getElementById(id).value='');
-  ['f-status','f-assign','f-client'].forEach(id=>document.getElementById(id).selectedIndex=0);
+  ['f-status','f-assign','f-client','f-priority'].forEach(id=>document.getElementById(id).selectedIndex=0);
   renderTable();
+}
+
+// ── SELECTION ──
+function toggleSelectAll(checked){
+  const rows=document.querySelectorAll('.row-check');
+  rows.forEach(r=>{r.checked=checked;checked?selectedIds.add(r.dataset.id):selectedIds.delete(r.dataset.id)});
+  updateBulkBar();
+}
+function toggleRow(id,checked){checked?selectedIds.add(id):selectedIds.delete(id);updateBulkBar()}
+function clearSelection(){selectedIds.clear();document.querySelectorAll('.row-check').forEach(r=>r.checked=false);document.getElementById('th-check').checked=false;updateBulkBar()}
+function updateBulkBar(){
+  const n=selectedIds.size;
+  document.getElementById('bulk-bar').classList.toggle('show',n>0);
+  document.getElementById('bulk-count').textContent=n+' selected';
+}
+
+// ── BULK ACTIONS ──
+function bulkAssign(){
+  if(!selectedIds.size)return;
+  document.getElementById('bulk-assign-sub').textContent=`Reassigning ${selectedIds.size} task(s) to:`;
+  document.getElementById('modal-bulk-assign').classList.add('open');
+}
+async function submitBulkAssign(){
+  const uid=document.getElementById('bulk-assign-user').value;
+  if(!uid)return;
+  const ids=[...selectedIds];
+  showSync('Reassigning...');
+  for(const id of ids){
+    const t=tasks.find(x=>x.id===id);if(!t)continue;
+    const upd={...t,assignedTo:uid,assignedName:users[uid]?.name||uid};
+    await jsonp({action:'saveTask',task:JSON.stringify(upd)}).catch(()=>{});
+    tasks=tasks.map(x=>x.id===id?upd:x);
+  }
+  hideSync();closeModal('modal-bulk-assign');clearSelection();renderTable();toast(`Reassigned ${ids.length} task(s) ✓`);
+}
+async function bulkDelete(){
+  if(!selectedIds.size||!confirm(`Delete ${selectedIds.size} selected task(s)?`))return;
+  const ids=[...selectedIds];showSync('Deleting...');
+  for(const id of ids){
+    await jsonp({action:'deleteTask',id:String(id)}).catch(()=>{});
+    tasks=tasks.filter(t=>t.id!==id);
+  }
+  hideSync();clearSelection();renderTable();renderOverdue();renderReport();toast(`Deleted ${ids.length} task(s)`,'info');
+}
+
+// ── PRIORITY BADGE ──
+function priHTML(p){
+  const cls={High:'pri-high',Medium:'pri-medium',Low:'pri-low'};
+  return`<span class="pri ${cls[p]||'pri-medium'}">${p||'Medium'}</span>`;
 }
 
 // ── TABLE ──
 function statusBadge(s){
   const m={[S.PENDING]:'b-pending',[S.COMP_USER]:'b-comp',[S.REVIEW]:'b-review',[S.DONE]:'b-done'};
-  return `<span class="badge ${m[s]||'b-pending'}">${s||S.PENDING}</span>`;
+  return`<span class="badge ${m[s]||'b-pending'}">${s||S.PENDING}</span>`;
 }
 function actHTML(t){
-  const isAdmin=session.role==='admin';
-  const isOwner=session.id===t.assignedTo;
+  const isAdmin=session.role==='admin';const isOwner=session.id===t.assignedTo;
   let h='<div class="act-wrap">';
+  h+=`<button class="btn btn-ghost btn-xs" onclick="openDetail('${t.id}')" title="View details">👁</button>`;
   if(isOwner&&t.status===S.PENDING){
     h+=`<button class="btn btn-success btn-xs" onclick="openComplete('${t.id}')">✓ Done</button>`;
     h+=`<button class="btn btn-ghost btn-xs" onclick="openReason('${t.id}')">Reason</button>`;
   }
   if(isAdmin&&t.status===S.REVIEW)h+=`<button class="btn btn-accent btn-xs" onclick="reviewTask('${t.id}')">✓ Reviewed</button>`;
-  if(isAdmin){
-    h+=`<button class="btn btn-ghost btn-xs" onclick="openEdit('${t.id}')">✎</button>`;
-    h+=`<button class="btn btn-danger btn-xs" onclick="deleteTask('${t.id}')">✕</button>`;
-  }
-  if(!isAdmin&&!(isOwner&&t.status===S.PENDING))h+='<span style="color:var(--text3);font-size:12px">—</span>';
+  if(isAdmin){h+=`<button class="btn btn-ghost btn-xs" onclick="openEdit('${t.id}')">✎</button>`;h+=`<button class="btn btn-danger btn-xs" onclick="deleteTask('${t.id}')">✕</button>`;}
+  if(!isAdmin&&!(isOwner&&t.status===S.PENDING))h+='';
   return h+'</div>';
 }
-function renderTable(){
-  if(!session)return;
+
+function getSortedFiltered(){
   const search=document.getElementById('f-search').value.toLowerCase();
   const fstatus=document.getElementById('f-status').value;
   const fassign=document.getElementById('f-assign').value;
   const fclient=document.getElementById('f-client').value;
+  const fpriority=document.getElementById('f-priority').value;
   const dfrom=document.getElementById('f-from').value;
   const dto=document.getElementById('f-to').value;
   let vis=session.role==='user'?tasks.filter(t=>t.assignedTo===session.id):tasks;
-  const fil=vis.filter(t=>{
+  let fil=vis.filter(t=>{
     if(fstatus!=='All'&&t.status!==fstatus)return false;
     if(fassign!=='All'&&t.assignedTo!==fassign)return false;
     if(fclient!=='All'&&t.client!==fclient)return false;
+    if(fpriority!=='All'&&(t.priority||'Medium')!==fpriority)return false;
     if(dfrom&&t.deadline<dfrom)return false;
     if(dto&&t.deadline>dto)return false;
     if(search&&!t.task.toLowerCase().includes(search)&&!t.client.toLowerCase().includes(search)&&!(t.assignedName||'').toLowerCase().includes(search))return false;
     return true;
   });
+  const priOrder={High:0,Medium:1,Low:2};
+  fil.sort((a,b)=>{
+    let av,bv;
+    if(sortCol==='ageing'){av=ageDays(a.deadline)||0;bv=ageDays(b.deadline)||0;}
+    else if(sortCol==='priority'){av=priOrder[a.priority||'Medium']||1;bv=priOrder[b.priority||'Medium']||1;}
+    else if(sortCol==='sr'){av=parseInt(a.sr)||0;bv=parseInt(b.sr)||0;}
+    else{av=String(a[sortCol]||'').toLowerCase();bv=String(b[sortCol]||'').toLowerCase();}
+    return av>bv?sortDir:av<bv?-sortDir:0;
+  });
+  return fil;
+}
+
+function renderTable(){
+  if(!session)return;
+  const fil=getSortedFiltered();
   const base=session.role==='user'?tasks.filter(t=>t.assignedTo===session.id):tasks;
   document.getElementById('st-total').textContent=base.length;
   document.getElementById('st-pending').textContent=base.filter(t=>t.status===S.PENDING).length;
   document.getElementById('st-review').textContent=base.filter(t=>t.status===S.REVIEW).length;
   document.getElementById('st-done').textContent=base.filter(t=>t.status===S.DONE).length;
+  const overdueCnt=base.filter(t=>t.status!==S.DONE&&ageDays(t.deadline)>0).length;
+  document.getElementById('overdue-badge').textContent=overdueCnt;
+  document.getElementById('overdue-badge').style.display=overdueCnt>0?'inline':'none';
+
+  // DESKTOP TABLE
   const tbody=document.getElementById('task-tbody');
   if(!fil.length){
-    tbody.innerHTML=`<tr><td colspan="9" class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">No tasks found</div><div class="empty-sub">${session.role==='user'?'No tasks assigned to you yet':'Try adjusting your filters'}</div></td></tr>`;
-    return;
+    tbody.innerHTML=`<tr><td colspan="11" class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">No tasks found</div><div class="empty-sub">${session.role==='user'?'No tasks assigned to you yet':'Try adjusting your filters'}</div></td></tr>`;
+  } else {
+    tbody.innerHTML=fil.map(t=>`<tr class="${selectedIds.has(t.id)?'selected':''}">
+      <td><input type="checkbox" class="row-check" data-id="${t.id}" ${selectedIds.has(t.id)?'checked':''} onchange="toggleRow('${t.id}',this.checked)" style="cursor:pointer"/></td>
+      <td style="color:var(--text3);font-weight:600">${t.sr||''}</td>
+      <td class="td-bold" title="${t.task||''}">${t.task||''}</td>
+      <td class="td-sm" title="${t.client||''}">${t.client||'—'}</td>
+      <td>${priHTML(t.priority||'Medium')}</td>
+      <td style="color:var(--text2);white-space:nowrap;font-size:12px">${fmtDate(t.deadline)}</td>
+      <td style="white-space:nowrap;font-size:12px;color:var(--text2)">${t.assignedName||t.assignedTo||'—'}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>${ageHTML(t.deadline,t.status)}</td>
+      <td class="td-sm" title="${t.reason||''}">${t.reason||'<span style="opacity:.3">—</span>'}</td>
+      <td>${actHTML(t)}</td>
+    </tr>`).join('');
   }
-  tbody.innerHTML=fil.map(t=>`<tr>
-    <td style="color:var(--text3);font-weight:600">${t.sr||''}</td>
-    <td class="td-bold" title="${t.task||''}">${t.task||''}</td>
-    <td class="td-sm" title="${t.client||''}">${t.client||'—'}</td>
-    <td style="color:var(--text2);white-space:nowrap;font-size:12px">${fmtDate(t.deadline)}</td>
-    <td style="white-space:nowrap;font-size:12px;color:var(--text2)">${t.assignedName||t.assignedTo||'—'}</td>
-    <td>${statusBadge(t.status)}</td>
-    <td>${ageHTML(t.deadline,t.status)}</td>
-    <td class="td-sm" title="${t.reason||''}">${t.reason||'<span style="opacity:.3">—</span>'}</td>
-    <td>${actHTML(t)}</td>
-  </tr>`).join('');
+
+  // MOBILE CARDS
+  const cards=document.getElementById('mobile-cards');
+  if(!fil.length){cards.innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">No tasks found</div></div>`}
+  else{cards.innerHTML=fil.map(t=>`
+    <div class="task-card">
+      <div class="task-card-top">
+        <div class="task-card-title">${t.task||''}</div>
+        ${priHTML(t.priority||'Medium')}
+      </div>
+      <div class="task-card-meta">
+        <div class="task-card-meta-item">Client<span>${t.client||'—'}</span></div>
+        <div class="task-card-meta-item">Deadline<span>${fmtDate(t.deadline)}</span></div>
+        <div class="task-card-meta-item">Assigned To<span>${t.assignedName||'—'}</span></div>
+        <div class="task-card-meta-item">Ageing<span>${ageHTML(t.deadline,t.status)}</span></div>
+      </div>
+      <div style="margin-bottom:8px">${statusBadge(t.status)}</div>
+      <div class="task-card-actions">${actHTML(t)}</div>
+    </div>`).join('')}
 }
 
 // ── TASK ACTIONS ──
 function openComplete(id){activeId=id;document.getElementById('modal-complete').classList.add('open')}
 async function submitComplete(){
-  const adminEmails=Object.values(users).filter(u=>u.role==='admin'&&u.email).map(u=>u.email).join(',');
-  const upd=tasks.map(t=>t.id===activeId?{...t,status:S.REVIEW,completedBy:session.name,completedAt:new Date().toISOString(),assignedEmail:t.assignedEmail||users[t.assignedTo]?.email||'',adminEmails:t.adminEmails||adminEmails}:t);
+  const upd=tasks.map(t=>t.id===activeId?{...t,status:S.REVIEW,completedBy:session.name,completedAt:new Date().toISOString()}:t);
   const ok=await apiSave(upd.find(t=>t.id===activeId));
-  if(ok){tasks=upd;closeModal('modal-complete');renderTable();toast('Marked complete — awaiting admin review.');}
+  if(ok){tasks=upd;closeModal('modal-complete');renderTable();renderOverdue();renderReport();toast('Awaiting admin review.');}
 }
-  function openReason(id){
+function openReason(id){
   activeId=id;document.getElementById('reason-inp').value=(tasks.find(t=>t.id===id)||{}).reason||'';
   document.getElementById('modal-reason').classList.add('open');
 }
 async function submitReason(){
   const r=document.getElementById('reason-inp').value.trim();if(!r)return;
-  const adminEmails=Object.values(users).filter(u=>u.role==='admin'&&u.email).map(u=>u.email).join(',');
-  const upd=tasks.map(t=>t.id===activeId?{...t,reason:r,assignedEmail:t.assignedEmail||users[t.assignedTo]?.email||'',adminEmails:t.adminEmails||adminEmails}:t);
+  const upd=tasks.map(t=>t.id===activeId?{...t,reason:r}:t);
   const ok=await apiSave(upd.find(t=>t.id===activeId));
   if(ok){tasks=upd;closeModal('modal-reason');renderTable();toast('Reason saved.');}
 }
 async function reviewTask(id){
-  const adminEmails=Object.values(users).filter(u=>u.role==='admin'&&u.email).map(u=>u.email).join(',');
-  const upd=tasks.map(t=>t.id===id?{...t,status:S.DONE,reviewedBy:session.name,reviewedAt:new Date().toISOString(),assignedEmail:t.assignedEmail||users[t.assignedTo]?.email||'',adminEmails:t.adminEmails||adminEmails}:t);
+  const upd=tasks.map(t=>t.id===id?{...t,status:S.DONE,reviewedBy:session.name,reviewedAt:new Date().toISOString()}:t);
   const ok=await apiSave(upd.find(t=>t.id===id));
-  if(ok){tasks=upd;renderTable();toast('Task fully completed! ✓');}
-} 
+  if(ok){tasks=upd;renderTable();renderOverdue();renderReport();toast('Task fully completed! ✓');}
+}
 async function deleteTask(id){
   if(!confirm('Delete this task permanently?'))return;
   const ok=await apiDelete(id);
-  if(ok){tasks=tasks.filter(t=>t.id!==id);renderTable();toast('Task deleted.','info');}
+  if(ok){tasks=tasks.filter(t=>t.id!==id);renderTable();renderOverdue();renderReport();toast('Task deleted.','info');}
 }
 
 // ── EDIT TASK ──
@@ -735,6 +943,7 @@ function openEdit(id){
   document.getElementById('et-task').value=t.task||'';
   document.getElementById('et-deadline').value=t.deadline||'';
   document.getElementById('et-status').value=t.status||S.PENDING;
+  document.getElementById('et-priority').value=t.priority||'Medium';
   buildDropdowns();
   setTimeout(()=>{document.getElementById('et-client').value=t.client||'';document.getElementById('et-assign').value=t.assignedTo||''},50);
   document.getElementById('et-err').textContent='';
@@ -746,99 +955,206 @@ async function submitEdit(){
   const deadline=document.getElementById('et-deadline').value;
   const assignTo=document.getElementById('et-assign').value;
   const status=document.getElementById('et-status').value;
+  const priority=document.getElementById('et-priority').value;
   if(!task||!client||!deadline||!assignTo){document.getElementById('et-err').textContent='All fields required.';return}
-  const upd=tasks.map(t=>t.id===editId?{...t,task,client,deadline,assignedTo:assignTo,assignedName:users[assignTo]?.name||assignTo,status}:t);
+  const upd=tasks.map(t=>t.id===editId?{...t,task,client,deadline,assignedTo:assignTo,assignedName:users[assignTo]?.name||assignTo,status,priority}:t);
   const ok=await apiSave(upd.find(t=>t.id===editId));
   if(ok){tasks=upd;closeModal('modal-edit');renderTable();toast('Task updated.');}
 }
 
-// ════════════════════════════════════════
-// USER MASTER
-// ════════════════════════════════════════
+// ── TASK DETAIL + COMMENTS ──
+function openDetail(id){
+  detailId=id;const t=tasks.find(x=>x.id===id);if(!t)return;
+  document.getElementById('detail-title').textContent=t.task;
+  document.getElementById('detail-grid').innerHTML=`
+    <div class="detail-item"><label>Client</label><span>${t.client||'—'}</span></div>
+    <div class="detail-item"><label>Deadline</label><span>${fmtDate(t.deadline)}</span></div>
+    <div class="detail-item"><label>Assigned To</label><span>${t.assignedName||'—'}</span></div>
+    <div class="detail-item"><label>Priority</label><span>${priHTML(t.priority||'Medium')}</span></div>
+    <div class="detail-item"><label>Status</label><span>${statusBadge(t.status)}</span></div>
+    <div class="detail-item"><label>Ageing</label><span>${ageHTML(t.deadline,t.status)}</span></div>
+    <div class="detail-item"><label>Created By</label><span>${t.createdBy||'—'}</span></div>
+    <div class="detail-item"><label>Reason</label><span>${t.reason||'—'}</span></div>`;
+  renderComments(id);
+  document.getElementById('comment-inp').value='';
+  document.getElementById('modal-detail').classList.add('open');
+}
+function renderComments(id){
+  const list=document.getElementById('comments-list');
+  const c=(comments[id]||[]);
+  if(!c.length){list.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px 0">No comments yet. Be the first to add one.</div>';return}
+  list.innerHTML=c.map(cm=>`
+    <div class="comment-item">
+      <div class="comment-meta"><strong>${cm.by}</strong><span>${new Date(cm.at).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>
+      <div class="comment-text">${cm.text}</div>
+    </div>`).join('');
+  list.scrollTop=list.scrollHeight;
+}
+function submitComment(){
+  const txt=document.getElementById('comment-inp').value.trim();if(!txt||!detailId)return;
+  if(!comments[detailId])comments[detailId]=[];
+  comments[detailId].push({by:session.name,at:new Date().toISOString(),text:txt});
+  saveComments();renderComments(detailId);
+  document.getElementById('comment-inp').value='';toast('Comment added ✓');
+}
+
+// ── OVERDUE PAGE ──
+function renderOverdue(){
+  if(!session)return;
+  const base=session.role==='user'?tasks.filter(t=>t.assignedTo===session.id):tasks;
+  const overdue=base.filter(t=>t.status!==S.DONE&&ageDays(t.deadline)>0)
+    .sort((a,b)=>(ageDays(b.deadline)||0)-(ageDays(a.deadline)||0));
+  const list=document.getElementById('overdue-list');
+  if(!overdue.length){list.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">No overdue tasks!</div><div class="empty-sub">Everything is on track.</div></div>';return}
+  list.innerHTML=overdue.map(t=>`
+    <div class="overdue-row">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--red)">${t.task}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">${t.client} · ${t.assignedName} · Due ${fmtDate(t.deadline)}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div class="overdue-days">${ageDays(t.deadline)}d late</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">${priHTML(t.priority||'Medium')}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── REPORT PAGE ──
+function renderReport(){
+  if(!session||session.role!=='admin')return;
+  const total=tasks.length;
+  const done=tasks.filter(t=>t.status===S.DONE).length;
+  const pending=tasks.filter(t=>t.status===S.PENDING).length;
+  const review=tasks.filter(t=>t.status===S.REVIEW).length;
+  const overdue=tasks.filter(t=>t.status!==S.DONE&&ageDays(t.deadline)>0).length;
+  const onTime=tasks.filter(t=>t.status===S.DONE&&ageDays(t.deadline)<=0).length;
+
+  // Per-user performance
+  const uids=Object.keys(users).filter(id=>users[id].role==='user');
+  const perfRows=uids.map(uid=>{
+    const myTasks=tasks.filter(t=>t.assignedTo===uid);
+    const myDone=myTasks.filter(t=>t.status===S.DONE).length;
+    const pct=myTasks.length?Math.round(myDone/myTasks.length*100):0;
+    return{name:users[uid].name,total:myTasks.length,done:myDone,pct};
+  }).sort((a,b)=>b.pct-a.pct);
+
+  document.getElementById('report-grid').innerHTML=`
+    <div class="report-card">
+      <h4>📈 Overall Summary</h4>
+      ${[['Total Tasks',total],['Completed',done],['Pending',pending],['Review Pending',review],['Overdue',overdue],['Completed On Time',onTime]].map(([l,v])=>`
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px">
+          <span style="color:var(--text2)">${l}</span><strong>${v}</strong>
+        </div>`).join('')}
+    </div>
+    <div class="report-card">
+      <h4>👤 User Performance</h4>
+      ${perfRows.length?perfRows.map(r=>`
+        <div class="perf-row">
+          <div class="perf-name">${r.name}</div>
+          <div class="perf-bar-wrap"><div class="perf-bar" style="width:${r.pct}%"></div></div>
+          <div class="perf-val">${r.pct}%</div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:8px;margin-left:0">${r.done}/${r.total} tasks completed</div>`).join('')
+      :'<div style="color:var(--text3);font-size:12px">No users found.</div>'}
+    </div>
+    <div class="report-card">
+      <h4>📊 Priority Breakdown</h4>
+      ${['High','Medium','Low'].map(p=>{
+        const cnt=tasks.filter(t=>(t.priority||'Medium')===p).length;
+        const pct=total?Math.round(cnt/total*100):0;
+        return`<div class="perf-row">
+          <div class="perf-name">${priHTML(p)}</div>
+          <div class="perf-bar-wrap"><div class="perf-bar" style="width:${pct}%;background:${p==='High'?'var(--red)':p==='Low'?'var(--green)':'var(--orange)'}"></div></div>
+          <div class="perf-val">${cnt}</div>
+        </div>`;}).join('')}
+    </div>`;
+}
+
+// ── EXPORT CSV ──
+function exportCSV(){
+  const base=session.role==='user'?tasks.filter(t=>t.assignedTo===session.id):tasks;
+  const headers=['Sr','Task','Client','Priority','Deadline','Assigned To','Status','Ageing','Reason','Created By'];
+  const rows=base.map(t=>[
+    t.sr,
+    `"${(t.task||'').replace(/"/g,'""')}"`,
+    `"${(t.client||'').replace(/"/g,'""')}"`,
+    t.priority||'Medium',
+    fmtDate(t.deadline),
+    t.assignedName||t.assignedTo||'',
+    t.status,
+    t.status===S.DONE?'—':(ageDays(t.deadline)||0)+'d',
+    `"${(t.reason||'').replace(/"/g,'""')}"`,
+    t.createdBy||''
+  ]);
+  const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download=`tasks_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();toast('CSV exported ✓');
+}
+
+// ── USER MASTER ──
 function renderUserMaster(){
   const isAdmin=session&&session.role==='admin';
-  const list=document.getElementById('user-master-list');
   const ids=Object.keys(users);
-  if(!ids.length){list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px">No users found.</div>';return}
-  list.innerHTML=ids.map(uid=>{
-    const u=users[uid];
-    const init=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const isSelf=uid===session.id;
-    const canEdit=isAdmin||isSelf;
-    const canDelete=isAdmin&&!isSelf;
-    return `<div class="master-row">
+  document.getElementById('user-master-list').innerHTML=ids.map(uid=>{
+    const u=users[uid];const init=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const isSelf=uid===session.id;const canDelete=isAdmin&&!isSelf;
+    return`<div class="master-row">
       <div class="master-av ${u.role==='admin'?'av-admin':'av-user'}">${init}</div>
       <div class="master-info">
-        <div class="master-name">${u.name} ${isSelf?'<span style="font-size:10px;color:var(--text3)">(you)</span>':''}</div>
-        <div class="master-sub">${uid} · <span class="role-pill ${u.role==='admin'?'rp-admin':'rp-user'}">${u.role}</span>${u.email?` · <span style="color:var(--text3)">${u.email}</span>`:''}</div>
+        <div class="master-name">${u.name}${isSelf?' <span style="font-size:10px;color:var(--text3)">(you)</span>':''}</div>
+        <div class="master-sub">${uid} · <span class="role-pill ${u.role==='admin'?'rp-admin':'rp-user'}">${u.role}</span>${u.email?` · ${u.email}`:''}</div>
       </div>
-      ${canEdit?`<button class="btn btn-ghost btn-xs" onclick="openEditUser('${uid}')">✎ Edit</button>`:''}
+      <button class="btn btn-ghost btn-xs" onclick="openEditUser('${uid}')">✎</button>
       ${canDelete?`<button class="btn btn-danger btn-xs" onclick="removeUser('${uid}')">✕</button>`:''}
     </div>`;
   }).join('');
 }
-
 function openAddUser(){
   isNewUser=true;editUserId=null;
   document.getElementById('user-modal-title').textContent='Add New User';
   document.getElementById('user-modal-sub').textContent='Fill in the details for the new user.';
   document.getElementById('um-pw-hint').textContent='(required)';
   ['um-name','um-username','um-email','um-pw','um-pw2'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('um-role').value='user';
-  document.getElementById('um-username').disabled=false;
-  document.getElementById('um-err').textContent='';
-  document.getElementById('modal-user').classList.add('open');
+  document.getElementById('um-role').value='user';document.getElementById('um-username').disabled=false;
+  document.getElementById('um-err').textContent='';document.getElementById('modal-user').classList.add('open');
 }
 function openEditUser(uid){
-  isNewUser=false;editUserId=uid;
-  const u=users[uid];
+  isNewUser=false;editUserId=uid;const u=users[uid];
   document.getElementById('user-modal-title').textContent='Edit User';
   document.getElementById('user-modal-sub').textContent=`Editing: ${u.name} (${uid})`;
   document.getElementById('um-pw-hint').textContent='(leave blank to keep existing)';
-  document.getElementById('um-name').value=u.name;
-  document.getElementById('um-username').value=uid;
-  document.getElementById('um-username').disabled=true;
-  document.getElementById('um-role').value=u.role;
+  document.getElementById('um-name').value=u.name;document.getElementById('um-username').value=uid;
+  document.getElementById('um-username').disabled=true;document.getElementById('um-role').value=u.role;
   document.getElementById('um-email').value=u.email||'';
-  document.getElementById('um-pw').value='';
-  document.getElementById('um-pw2').value='';
-  document.getElementById('um-err').textContent='';
-  document.getElementById('modal-user').classList.add('open');
+  document.getElementById('um-pw').value='';document.getElementById('um-pw2').value='';
+  document.getElementById('um-err').textContent='';document.getElementById('modal-user').classList.add('open');
 }
 function submitUser(){
   const name=document.getElementById('um-name').value.trim();
   const username=document.getElementById('um-username').value.trim().toLowerCase();
   const role=document.getElementById('um-role').value;
   const email=document.getElementById('um-email').value.trim().toLowerCase();
-  const pw=document.getElementById('um-pw').value;
-  const pw2=document.getElementById('um-pw2').value;
+  const pw=document.getElementById('um-pw').value;const pw2=document.getElementById('um-pw2').value;
   const errEl=document.getElementById('um-err');
-
   if(!name){errEl.textContent='Full name is required.';return}
   if(isNewUser){
     if(!username){errEl.textContent='Username is required.';return}
     if(!/^[a-z0-9_]+$/.test(username)){errEl.textContent='Username: only lowercase letters, numbers, underscore.';return}
     if(users[username]){errEl.textContent='Username already exists.';return}
-    if(!pw){errEl.textContent='Password is required for new user.';return}
+    if(!pw){errEl.textContent='Password is required.';return}
   }
-  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Enter a valid email address.';return}
-  if(pw&&pw.length<4){errEl.textContent='Password must be at least 4 characters.';return}
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Invalid email.';return}
+  if(pw&&pw.length<4){errEl.textContent='Min 4 characters.';return}
   if(pw&&pw!==pw2){errEl.textContent='Passwords do not match.';return}
-
-  if(isNewUser){
-    users[username]={name,role,email,password:pw};
-  } else {
-    users[editUserId].name=name;
-    users[editUserId].role=role;
-    users[editUserId].email=email;
-    if(pw)users[editUserId].password=pw;
-  }
+  if(isNewUser){users[username]={name,role,email,password:pw}}
+  else{users[editUserId].name=name;users[editUserId].role=role;users[editUserId].email=email;if(pw)users[editUserId].password=pw}
   saveU();buildDropdowns();renderUserMaster();closeModal('modal-user');
   toast(isNewUser?`User "${name}" added ✓`:`User "${name}" updated ✓`);
 }
-  
 function removeUser(uid){
-  if(!confirm(`Remove user "${users[uid].name}"? They will no longer be able to log in.`))return;
+  if(!confirm(`Remove user "${users[uid].name}"?`))return;
   delete users[uid];saveU();buildDropdowns();renderUserMaster();toast('User removed.','info');
 }
 
@@ -851,47 +1167,31 @@ function renderClientMaster(){
     <div class="master-row">
       <div class="master-av" style="background:var(--surface3);color:var(--text2);font-size:18px;border-radius:8px">🏢</div>
       <div class="master-info"><div class="master-name">${c}</div></div>
-      ${isAdmin?`<button class="btn btn-danger btn-xs" onclick="removeClient(${i})">✕ Remove</button>`:''}
+      ${isAdmin?`<button class="btn btn-danger btn-xs" onclick="removeClient(${i})">✕</button>`:''}
     </div>`).join('');
 }
-function showAddClient(){
-  const row=document.getElementById('add-client-row');
-  row.style.display='flex';document.getElementById('new-client-inp').focus();
-}
-function cancelAddClient(){
-  document.getElementById('add-client-row').style.display='none';
-  document.getElementById('new-client-inp').value='';
-}
+function showAddClient(){document.getElementById('add-client-row').style.display='flex';document.getElementById('new-client-inp').focus()}
+function cancelAddClient(){document.getElementById('add-client-row').style.display='none';document.getElementById('new-client-inp').value=''}
 function addClient(){
-  const v=document.getElementById('new-client-inp').value.trim();
-  if(!v)return;
-  if(clients.includes(v)){toast('Client already exists.','error');return}
+  const v=document.getElementById('new-client-inp').value.trim();if(!v)return;
+  if(clients.includes(v)){toast('Already exists.','error');return}
   clients.push(v);saveC();buildDropdowns();cancelAddClient();renderClientMaster();toast('Client added ✓');
 }
 function removeClient(i){
-  if(!confirm(`Remove client "${clients[i]}"?`))return;
+  if(!confirm(`Remove "${clients[i]}"?`))return;
   clients.splice(i,1);saveC();buildDropdowns();renderClientMaster();toast('Client removed.','info');
 }
 document.getElementById('new-client-inp').addEventListener('keydown',e=>{if(e.key==='Enter')addClient()});
 
-// ── SETTINGS ──
-function renderSettings(){
-  if(!session)return;
-  renderUserMaster();
-  renderClientMaster();
-}
-
+function renderSettings(){if(!session)return;renderUserMaster();renderClientMaster()}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 
-// ── INIT ──
 loadLocal();
 </script>
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("sw.js")
-      .then(r=>console.log("SW:",r.scope))
-      .catch(e=>console.log("SW err:",e));
+    navigator.serviceWorker.register("sw.js").catch(e=>console.log("SW err:",e));
   });
 }
 </script>
