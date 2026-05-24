@@ -1096,17 +1096,20 @@ function exportCSV(){
 // ── USER MASTER ──
 function renderUserMaster(){
   const isAdmin=session&&session.role==='admin';
-  const ids=Object.keys(users);
+  // Admin sees all users. Regular user sees only themselves.
+  const ids=isAdmin ? Object.keys(users) : [session.id];
   document.getElementById('user-master-list').innerHTML=ids.map(uid=>{
     const u=users[uid];const init=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const isSelf=uid===session.id;const canDelete=isAdmin&&!isSelf;
+    const isSelf=uid===session.id;
+    const canEdit=isAdmin||isSelf; // admin edits all, user edits only self
+    const canDelete=isAdmin&&!isSelf; // admin deletes others, never self
     return`<div class="master-row">
       <div class="master-av ${u.role==='admin'?'av-admin':'av-user'}">${init}</div>
       <div class="master-info">
         <div class="master-name">${u.name}${isSelf?' <span style="font-size:10px;color:var(--text3)">(you)</span>':''}</div>
         <div class="master-sub">${uid} · <span class="role-pill ${u.role==='admin'?'rp-admin':'rp-user'}">${u.role}</span>${u.email?` · ${u.email}`:''}</div>
       </div>
-      <button class="btn btn-ghost btn-xs" onclick="openEditUser('${uid}')">✎</button>
+      ${canEdit?`<button class="btn btn-ghost btn-xs" onclick="openEditUser('${uid}')">✎ Edit</button>`:''}
       ${canDelete?`<button class="btn btn-danger btn-xs" onclick="removeUser('${uid}')">✕</button>`:''}
     </div>`;
   }).join('');
@@ -1121,6 +1124,7 @@ function openAddUser(){
   document.getElementById('um-err').textContent='';document.getElementById('modal-user').classList.add('open');
 }
 function openEditUser(uid){
+  if(session.role!=='admin'&&uid!==session.id){toast('You can only edit your own profile.','error');return}
   isNewUser=false;editUserId=uid;const u=users[uid];
   document.getElementById('user-modal-title').textContent='Edit User';
   document.getElementById('user-modal-sub').textContent=`Editing: ${u.name} (${uid})`;
@@ -1166,8 +1170,8 @@ function renderClientMaster(){
   list.innerHTML=clients.map((c,i)=>`
     <div class="master-row">
       <div class="master-av" style="background:var(--surface3);color:var(--text2);font-size:18px;border-radius:8px">🏢</div>
-      <div class="master-info"><div class="master-name">${c}</div></div>
-      ${isAdmin?`<button class="btn btn-danger btn-xs" onclick="removeClient(${i})">✕</button>`:''}
+      <div class="master-info"><div class="master-name">${c}</div><div class="master-sub">Client</div></div>
+      ${isAdmin?`<button class="btn btn-danger btn-xs" onclick="removeClient(${i})">✕ Remove</button>`:'<span style="font-size:10px;color:var(--text3)">View only</span>'}
     </div>`).join('');
 }
 function showAddClient(){document.getElementById('add-client-row').style.display='flex';document.getElementById('new-client-inp').focus()}
@@ -1183,7 +1187,15 @@ function removeClient(i){
 }
 document.getElementById('new-client-inp').addEventListener('keydown',e=>{if(e.key==='Enter')addClient()});
 
-function renderSettings(){if(!session)return;renderUserMaster();renderClientMaster()}
+function renderSettings(){
+  if(!session)return;
+  const isAdmin=session.role==='admin';
+  // Update settings page description based on role
+  document.querySelector('#page-settings .page-header-left p').textContent=
+    isAdmin?'Manage users, clients and passwords':'View clients · Edit your own profile only';
+  renderUserMaster();
+  renderClientMaster();
+}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 
 loadLocal();
