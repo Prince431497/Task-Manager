@@ -566,17 +566,49 @@ let activeId=null,editUserId=null,isNewUser=false,editId=null,detailId=null;
 let sortCol='sr',sortDir=1,selectedIds=new Set();
 let isLight=false;
 
-// ── LOCAL STORAGE ──
 function loadLocal(){
-  try{const u=JSON.parse(localStorage.getItem('tm_users')||'null');users=u||JSON.parse(JSON.stringify(SEED_USERS))}catch(_){users=JSON.parse(JSON.stringify(SEED_USERS))}
-  try{const c=JSON.parse(localStorage.getItem('tm_clients')||'null');clients=c||[...SEED_CLIENTS]}catch(_){clients=[...SEED_CLIENTS]}
   try{comments=JSON.parse(localStorage.getItem('tm_comments')||'{}')}catch(_){comments={}}
   isLight=localStorage.getItem('tm_theme')==='light';
   if(isLight){document.body.classList.add('light');document.getElementById('theme-btn').textContent='☀️'}
 }
-function saveU(){localStorage.setItem('tm_users',JSON.stringify(users))}
-function saveC(){localStorage.setItem('tm_clients',JSON.stringify(clients))}
 function saveComments(){localStorage.setItem('tm_comments',JSON.stringify(comments))}
+
+// ── USERS FROM SHEET ──
+async function loadUsers(){
+  try{
+    const d=await jsonp({action:'getUsers'});
+    if(d.success&&Object.keys(d.users).length){
+      users=d.users;
+    } else {
+      users=JSON.parse(JSON.stringify(SEED_USERS));
+    }
+  }catch(_){users=JSON.parse(JSON.stringify(SEED_USERS))}
+}
+async function saveU(username, user){
+  try{ await jsonp({action:'saveUser', username, user:JSON.stringify(user)}); }
+  catch(e){ toast('Error saving user','error'); }
+}
+async function deleteU(username){
+  try{ await jsonp({action:'deleteUser', username}); }
+  catch(e){ toast('Error deleting user','error'); }
+}
+
+// ── CLIENTS FROM SHEET ──
+async function loadClients(){
+  try{
+    const d=await jsonp({action:'getClients'});
+    if(d.success){ clients=d.clients||[]; }
+    else { clients=[...SEED_CLIENTS]; }
+  }catch(_){ clients=[...SEED_CLIENTS]; }
+}
+async function saveClientToSheet(client){
+  try{ await jsonp({action:'saveClient', client}); }
+  catch(e){ toast('Error saving client','error'); }
+}
+async function deleteClientFromSheet(client){
+  try{ await jsonp({action:'deleteClient', client}); }
+  catch(e){ toast('Error deleting client','error'); }
+}
 
 // ── THEME ──
 function toggleTheme(){
@@ -660,6 +692,9 @@ function ageHTML(deadline,status){
 async function doLogin(){
   const uid=document.getElementById('inp-user').value.trim().toLowerCase();
   const pw=document.getElementById('inp-pass').value;
+showSync('Checking credentials...');
+  await loadUsers();
+  hideSync();
   const u=users[uid];
   if(!u||u.password!==pw){document.getElementById('login-err').textContent='Invalid username or password.';return}
   const btn=document.getElementById('btn-signin');btn.textContent='Signing in...';btn.disabled=true;
@@ -679,6 +714,10 @@ async function doLogin(){
   document.getElementById('page-sub').textContent=session.role==='admin'?'Manage and track all tasks':'Your assigned tasks';
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-screen').style.display='block';
+  showSync('Loading users & clients...');
+  await loadUsers();
+  await loadClients();
+  hideSync();
   buildDropdowns();renderSettings();await loadTasks();
   btn.textContent='Sign In →';btn.disabled=false;
 }
@@ -749,6 +788,22 @@ async function addTask(){
     renderTable();renderOverdue();renderReport();toast('Task created ✓');
   }
   btn.disabled=false;btn.textContent='Create Task';
+}
+  
+async function addClient(){
+  const v=document.getElementById('new-client-inp').value.trim();if(!v)return;
+  if(clients.includes(v)){toast('Already exists.','error');return}
+  showSync('Saving client...');
+  await saveClientToSheet(v);
+  clients.push(v);
+  hideSync();buildDropdowns();cancelAddClient();renderClientMaster();toast('Client added ✓');
+}
+async function removeClient(i){
+  if(!confirm(`Remove "${clients[i]}"?`))return;
+  showSync('Removing client...');
+  await deleteClientFromSheet(clients[i]);
+  clients.splice(i,1);
+  hideSync();buildDropdowns();renderClientMaster();toast('Client removed.','info');
 }
 
 // ── FILTERS ──
@@ -1135,7 +1190,7 @@ function openEditUser(uid){
   document.getElementById('um-pw').value='';document.getElementById('um-pw2').value='';
   document.getElementById('um-err').textContent='';document.getElementById('modal-user').classList.add('open');
 }
-function submitUser(){
+async function submitUser(){
   const name=document.getElementById('um-name').value.trim();
   const username=document.getElementById('um-username').value.trim().toLowerCase();
   const role=document.getElementById('um-role').value;
@@ -1152,16 +1207,23 @@ function submitUser(){
   if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Invalid email.';return}
   if(pw&&pw.length<4){errEl.textContent='Min 4 characters.';return}
   if(pw&&pw!==pw2){errEl.textContent='Passwords do not match.';return}
-  if(isNewUser){users[username]={name,role,email,password:pw}}
-  else{users[editUserId].name=name;users[editUserId].role=role;users[editUserId].email=email;if(pw)users[editUserId].password=pw}
-  saveU();buildDropdowns();renderUserMaster();closeModal('modal-user');
+  const uid=isNewUser?username:editUserId;
+  const existingPw=isNewUser?pw:(pw?pw:users[editUserId].password);
+  const updatedUser={name,role,email,password:existingPw};
+  showSync('Saving user...');
+  await saveU(uid, updatedUser);
+  users[uid]=updatedUser;
+  hideSync();buildDropdowns();renderUserMaster();closeModal('modal-user');
   toast(isNewUser?`User "${name}" added ✓`:`User "${name}" updated ✓`);
 }
-function removeUser(uid){
+async function removeUser(uid){
   if(!confirm(`Remove user "${users[uid].name}"?`))return;
-  delete users[uid];saveU();buildDropdowns();renderUserMaster();toast('User removed.','info');
+  showSync('Removing user...');
+  await deleteU(uid);
+  delete users[uid];
+  hideSync();buildDropdowns();renderUserMaster();toast('User removed.','info');
 }
-
+ 
 // ── CLIENT MASTER ──
 function renderClientMaster(){
   const isAdmin=session&&session.role==='admin';
