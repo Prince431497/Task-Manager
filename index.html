@@ -573,16 +573,17 @@ function loadLocal(){
 }
 function saveComments(){localStorage.setItem('tm_comments',JSON.stringify(comments))}
 
-// ── USERS FROM SHEET ──
 async function loadUsers(){
   try{
     const d=await jsonp({action:'getUsers'});
     if(d.success&&Object.keys(d.users).length){
       users=d.users;
+      // Clear old localStorage users
+      localStorage.removeItem('tm_users');
     } else {
-      users=JSON.parse(JSON.stringify(SEED_USERS));
+      users={};
     }
-  }catch(_){users=JSON.parse(JSON.stringify(SEED_USERS))}
+  }catch(_){ users={}; }
 }
 async function saveU(username, user){
   try{ await jsonp({action:'saveUser', username, user:JSON.stringify(user)}); }
@@ -593,13 +594,17 @@ async function deleteU(username){
   catch(e){ toast('Error deleting user','error'); }
 }
 
-// ── CLIENTS FROM SHEET ──
 async function loadClients(){
   try{
     const d=await jsonp({action:'getClients'});
-    if(d.success){ clients=d.clients||[]; }
-    else { clients=[...SEED_CLIENTS]; }
-  }catch(_){ clients=[...SEED_CLIENTS]; }
+    if(d.success){
+      clients=d.clients||[];
+      // Clear any old localStorage clients so they don't interfere
+      localStorage.removeItem('tm_clients');
+    } else {
+      clients=[];
+    }
+  }catch(_){ clients=[]; }
 }
 async function saveClientToSheet(client){
   try{
