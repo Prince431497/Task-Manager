@@ -602,9 +602,17 @@ async function loadClients(){
   }catch(_){ clients=[...SEED_CLIENTS]; }
 }
 async function saveClientToSheet(client){
-  try{ await jsonp({action:'saveClient', client}); }
-  catch(e){ toast('Error saving client','error'); }
+  try{
+    const d = await jsonp({action:'saveClient', client:client.trim()});
+    if(!d.success) toast('Client save error: '+(d.error||'unknown'),'error');
+    return d.success;
+  }catch(e){
+    toast('Network error saving client','error');
+    console.error('saveClient error:',e);
+    return false;
+  }
 }
+  
 async function deleteClientFromSheet(client){
   try{ await jsonp({action:'deleteClient', client}); }
   catch(e){ toast('Error deleting client','error'); }
@@ -793,11 +801,18 @@ async function addTask(){
 async function addClient(){
   const v=document.getElementById('new-client-inp').value.trim();if(!v)return;
   if(clients.includes(v)){toast('Already exists.','error');return}
-  showSync('Saving client...');
-  await saveClientToSheet(v);
-  clients.push(v);
-  hideSync();buildDropdowns();cancelAddClient();renderClientMaster();toast('Client added ✓');
+  showSync('Saving client to Google Sheets...');
+  const ok=await saveClientToSheet(v);
+  hideSync();
+  if(ok){
+    clients.push(v);
+    buildDropdowns();cancelAddClient();renderClientMaster();
+    toast('Client added and saved ✓');
+  } else {
+    toast('Failed to save client. Check your connection.','error');
+  }
 }
+  
 async function removeClient(i){
   if(!confirm(`Remove "${clients[i]}"?`))return;
   showSync('Removing client...');
